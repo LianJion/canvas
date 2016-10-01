@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>canvas-tree</title>
+</head>
+<body>
+	<canvas id="mycanvas"  style="border:2px solid #c3c3c3"></canvas>  
+</body>
+	<script type="text/javascript" src="js/jquery.js"></script>
+
+	<script>  
+		
+	    var hehe=document.getElementById("mycanvas");  
+	    var qui=hehe.getContext("2d");  
+	    $(window).resize(resizeCanvas);
+	    function resizeCanvas() { 
+		    hehe.setAttribute("width",$(window).get(0).innerWidth);
+			hehe.setAttribute("height", $(window).get(0).innerHeight);
+		};  
+		resizeCanvas();
+
+
+	    //count表示的是函数递归的层数，l是支干与主干的比例，slantl，slantr是表示分叉角度的一半，lenght_first主干道的初始长度，angle偏移画布水平线角度，lenght_first主干道的初始长度
+	    var count=12,l=0.7,slantl=30;  
+	    var lenght_first=hehe.height/5;
+	    var angle=Math.PI/2;  
+	    var point=new Array(0,0),slantr=slantl;  
+	   
+	    // 将slantl,slantr从角度转换成弧度
+	    slantl=slantl*Math.PI/180;
+	    slantr=slantr*Math.PI/180;  
+
+	    var sub_point_y;
+	    sub_point_y = hehe.height-lenght_first;
+	  
+	    // 绘制主干道
+	    qui.beginPath();  
+	    console.log(hehe.width/2);
+	    console.log(hehe.height);
+	    qui.moveTo(hehe.width/2,hehe.height);  
+	    qui.lineTo(hehe.width/2,sub_point_y);  
+	    qui.closePath();  
+	    qui.stroke();  
+	    point[0]=hehe.width/2;
+	    point[1]=sub_point_y;  
+	    drawtree(point,lenght_first,angle,0);  
+
+	    // 递归函数drawtree(分叉点坐标，前干道长度，偏移画布水平线角度，判读迭代次数)
+	    function drawtree(prepoint,long,angle,time){ 
+	    	// 分叉左右两点分别用数组存放 
+	        var lpoint=new Array(0,0);  
+	        var rpoint=new Array(0,0);  
+	        // long=long*l;
+	        long*=l;  
+	        // 求出分叉左右两点的坐标
+	        lpoint[0]=prepoint[0]+long*Math.cos(angle+slantl);  
+	        lpoint[1]=prepoint[1]-long*Math.sin(angle+slantl);  
+	        rpoint[0]=prepoint[0]+long*Math.cos(angle-slantr);  
+	        rpoint[1]=prepoint[1]-long*Math.sin(angle-slantr);  
+
+	        qui.beginPath();  
+	        qui.moveTo(prepoint[0],prepoint[1]);  
+	        qui.lineTo(lpoint[0],lpoint[1]);  
+	        qui.moveTo(prepoint[0],prepoint[1]);  
+	        qui.lineTo(rpoint[0],rpoint[1]);  
+	        qui.closePath();  
+	        qui.stroke();  
+	        if(time>count){
+	        	// console.log(time); 
+	        	return;
+	        }
+	        else{
+	        	drawtree(lpoint,long,angle+slantl,time+1);  
+	        	drawtree(rpoint,long,angle-slantr,time+1);  
+	        }
+	    }  
+	</script>  
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>size_change</title>
+</head>
+<body>
+	<canvas id="mycanvas"  style="border:2px solid #c3c3c3"></canvas>  
+</body>
+	<script type="text/javascript">
+		
+		if (window.addEventListener) {   
+			window.addEventListener('DOMContentLoaded', onCustomLoaded, false);   //firefox
+			window.addEventListener('load', onCustomLoaded, false);
+			window.addEventListener('resize', onCustomResize, false);
+		} else if (window.attachEvent)  {
+			window.attachEvent('onload', onCustomLoaded);  //IE
+			window.attachEvent('resize', onCustomResize);  //IE
+		}
+
+		var c_canvas;//canvas对象
+
+		function onCustomLoaded(e){ 
+			console.log("loaded");
+			// document.body.style.backgroundColor="#9CB2F9";//背景色
+			c_canvas=document.getElementById("mycanvas");//canvas的id
+			onCustomResize(null);
+		}
+
+
+		function onCustomResize(e){ 
+			//console.log("resize");
+			if(!c_canvas)
+				return;
+			var w=parseInt(c_canvas.width);
+			console.log(c_canvas.width);
+			var h=parseInt(c_canvas.height);
+			// 获取canvas画布的长宽高
+			var size=getViewPortSize();
+			var scale=Math.min(size.w/w,size.h/h);
+			c_canvas.style.width=w*scale+"px";
+			var test_width = c_canvas.style.width;
+			console.log(test_width);
+			c_canvas.style.height=h*scale+"px";
+			// c_canvas.style.width=w*scale;
+			// c_canvas.style.height=h*scale;
+			c_canvas.style.position ="absolute";
+			c_canvas.style.left=(size.w-w*scale)/2+"px";
+			c_canvas.style.top=(size.h-h*scale)/2+"px";
+			// 像素渣
+			// c_canvas.style.left=(size.w-w*scale)/2;
+			// c_canvas.style.top=(size.h-h*scale)/2;
+		}
+
+
+		function getViewPortSize() {
+			var o={"w":NaN,"h":NaN};
+			o.w=document.documentElement.clientWidth || document.body.clientWidth;
+			o.h=document.documentElement.clientHeight || document.body.clientHeight;
+		    return o;
+		}
+
+
+		c_canvas=document.getElementById("mycanvas");//canvas的id
+		var qui=c_canvas.getContext("2d");  
+		console.log(c_canvas.width);
+		//count表示的是函数递归的层数，l是支干与主干的比例，slantl，slantr是表示分叉角度的一半，lenght_first主干道的初始长度，angle偏移画布水平线角度，lenght_first主干道的初始长度
+	    var count=12,l=0.7,slantl=30;  
+	    var lenght_first=c_canvas.height/5;
+	    var angle=Math.PI/2;  
+	    var point=new Array(0,0),slantr=slantl;  
+	   
+	    // 将slantl,slantr从角度转换成弧度
+	    slantl=slantl*Math.PI/180;
+	    slantr=slantr*Math.PI/180;  
+
+	    var sub_point_y;
+	    sub_point_y = c_canvas.height-lenght_first;
+	  
+	    // 绘制主干道
+	    qui.beginPath();  
+	    console.log(c_canvas.width/2);
+	    console.log(c_canvas.height);
+	    qui.moveTo(c_canvas.width/2,c_canvas.height);  
+	    qui.lineTo(c_canvas.width/2,sub_point_y);  
+	    qui.closePath();  
+	    qui.stroke();  
+	    point[0]=c_canvas.width/2;
+	    point[1]=sub_point_y;  
+	    drawtree(point,lenght_first,angle,0);  
+
+	    // 递归函数drawtree(分叉点坐标，前干道长度，偏移画布水平线角度，判读迭代次数)
+	    function drawtree(prepoint,long,angle,time){ 
+	    	// 分叉左右两点分别用数组存放 
+	        var lpoint=new Array(0,0);  
+	        var rpoint=new Array(0,0);  
+	        // long=long*l;
+	        long*=l;  
+	        // 求出分叉左右两点的坐标
+	        lpoint[0]=prepoint[0]+long*Math.cos(angle+slantl);  
+	        lpoint[1]=prepoint[1]-long*Math.sin(angle+slantl);  
+	        rpoint[0]=prepoint[0]+long*Math.cos(angle-slantr);  
+	        rpoint[1]=prepoint[1]-long*Math.sin(angle-slantr);  
+
+	        qui.beginPath();  
+	        qui.moveTo(prepoint[0],prepoint[1]);  
+	        qui.lineTo(lpoint[0],lpoint[1]);  
+	        qui.moveTo(prepoint[0],prepoint[1]);  
+	        qui.lineTo(rpoint[0],rpoint[1]);  
+	        qui.closePath();  
+	        qui.stroke();  
+	        if(time>count){
+	        	// console.log(time); 
+	        	return;
+	        }
+	        else{
+	        	drawtree(lpoint,long,angle+slantl,time+1);  
+	        	drawtree(rpoint,long,angle-slantr,time+1);  
+	        }
+	    }  
+
+
+	</script>
+</html>
