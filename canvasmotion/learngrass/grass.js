@@ -1,8 +1,11 @@
-/**
- * Original version http://labs.hyperandroid.com/js1k
- */
+ 
+var canvas= document.getElementById("s");
+    ctx = canvas.getContext('2d');
+    canvas.width= window.innerWidth;
+    canvas.height=window.innerHeight;
 
- //立即执行函数
+
+ //立即执行函数 ,草
 (function() {
   //Grass方法
   Grass = function() {
@@ -108,6 +111,7 @@
       
           ctx.beginPath();
           ctx.moveTo( c[0], c[1] );
+          //这不对吧？怎么是立方贝塞尔了？怪不得是三维效果，4个坐标，尼玛，（x,y,z,w）
           ctx.bezierCurveTo(c[0], c[1], c[2], c[3], px, py);
           ctx.bezierCurveTo(px, py, c[4], c[5], c[6], c[7]);
           ctx.closePath();
@@ -123,19 +127,17 @@
   };
 })();
 
+
+
 (function() {
   Garden= function() {
     return this;
   };
   
   Garden.prototype= {
-    //草，星星，环境，流烟
+    //草的渐变，主要是时间的问题，没有这个Graden，画出来的草就一直闪一直闪
     grass:      null,
     ambient:    1,
-    stars:      null,
-    firefly_radius:  10,
-    num_fireflyes:  40,
-    num_stars:    512,
     width:      0,
     height:      0,
     
@@ -159,189 +161,68 @@
         this.grass.push(g);
       }
       
-      //绘制粒子效果
-      this.stars= [];
-      for( i=0; i<this.num_stars; i++ )  {
-        this.stars.push( Math.floor( Math.random()*(width-10)+5  ) );
-        this.stars.push( Math.floor( Math.random()*(height-10)+5 ) );
-      }
     },
     
     paint : function(ctx, time){
       ctx.save();
-      
-      // draw stars if ambient below .3 -> night
-    /*  if ( this.ambient<0.3 )  {
-        
-        // modify stars translucency by ambient (as transitioning to day, make them dissapear).
-        ctx.globalAlpha= 1-((this.ambient-0.05)/0.25);
-
-        // as well as making them dimmer
-        intensity= 1 - (this.ambient/2-0.05)/0.25;
-        
-        // how white do you want the stars to be ??
-        var c= Math.floor( 192*intensity );
-        var strc= 'rgb('+c+','+c+','+c+')';
-        ctx.strokeStyle=strc;
-        
-        // first num_fireflyes coordinates are fireflyes themshelves.
-        for( var j=this.num_fireflyes*2; j<this.stars.length; j+=2 )  {
-          var inc=1;
-          
-          // every one out of 3 stars move at 1.5 increment
-          if ( j%3===0 ) {
-            inc=1.5;
-          } else if ( j%11===0 ) {
-          // every one out of 11 stars move at 2.5 increment
-            inc=2.5;
-          }
-          // all the others at increment 1
-          this.stars[j]= (this.stars[j]+0.1*inc)%canvas.width;
-          
-          var y= this.stars[j+1];
-          ctx.strokeRect(this.stars[j],this.stars[j+1],1,1);
-
+        ctx.globalAlpha= 1;
+        var i;
+        //绘制草
+        for(i=0; i<this.grass.length; i++ ) {
+          this.grass[i].paint(ctx,time,this.ambient);
         }
-      }*/
-      
-      ctx.globalAlpha= 1;
-      
-      var i;
-      /*draw fireflyes
-        ctx.fillStyle= '#ffff00';      
-        for(i=0; i<this.num_fireflyes*2; i+=2) {
-          var angle= Math.PI*2*Math.sin(time*3E-4) + i*Math.PI/50;
-          var radius= this.firefly_radius*Math.cos(time*3E-4);
-          ctx.fillRect( 
-              this.width/2 + 
-              0.5*this.stars[i] + 
-              150*Math.cos(time*3E-4) * Math.sin(time*0.00001*i) +  // move horizontally with time 
-              radius*Math.cos(angle),
-              
-              this.height/2 + 
-              0.5*this.stars[i+1] +  
-              20*Math.sin(time*3E-4) * 5* Math.cos(time*0.00001*i)+  // move vertically with time 
-              radius*Math.sin(angle),
-              
-                3,
-                3 );
-        }          */  
-      
-      //绘制草
-      for(i=0; i<this.grass.length; i++ ) {
-        this.grass[i].paint(ctx,time,this.ambient);
-      }
       ctx.restore();
     }
   };
 })();
 
 
-//执行函数？
-function _doit()    {
-  
-  ctx.fillStyle= gradient;
+
+function drawGrass(time) {
+
+  var i;
+  var grass= [];
+  var grassnum = 30;
+
+  for(var i=0; i < grassnum; i++ ) {
+    //g是对象
+    var g= new Grass();
+    g.initialize(
+      canvas.width,
+      canvas.height,
+      50,      // min grass height 
+      canvas.height*2/3, // max grass height
+      20,     // grass max initial random angle 
+      40      // max random angle for animation 
+      );
+    grass.push(g);
+  }
+      
+  for(i=0; i<grass.length; i++ ) {
+    grass[i].paint(ctx,time,1);
+  }
+}
+
+
+function init(images) {
+
+  garden= new Garden();
+  //第三个参数是草的数量 300
+  garden.initialize(canvas.width, canvas.height, 300);
+  time= new Date().getTime();
+  //每隔30s执行一次_doit函数
+  interval = setInterval(_doit, 30);
+}
+
+
+function _doit() {
+ 
   ctx.fillRect(0,0,canvas.width,canvas.height);
   var ntime= new Date().getTime();
   var elapsed= ntime-time;
-
-  //paint函数里绘制了草，所以这句一定要
   garden.paint( ctx, elapsed );
-  
-  // lerp.
-  /*  if ( elapsed>nextLerpTime ) {
-    lerpindex= Math.floor((elapsed-nextLerpTime)/nextLerpTime);
-    if ( (elapsed-nextLerpTime)%nextLerpTime<lerpTime ) {
-      lerp( (elapsed-nextLerpTime)%nextLerpTime, lerpTime );
-    }
-  } */
+  //paint函数里绘制了草，所以这句一定要
+  // drawGrass(elapsed);
 }
 
-/**
- * fade sky colors
- * @param time current time
- * @param last how much time to take fading colors 渐变函数
- */
-
-
-/*function lerp( time, last ) {
-  gradient= ctx.createLinearGradient(0,0,0,canvas.height);
-  
-  var i0= lerpindex%colors.length;
-  var i1= (lerpindex+1)%colors.length;
-  
-  for( var i=0; i<4; i++ )  {
-    var rgb='rgb(';
-    for( var j=0; j<3; j++ ) {
-      rgb+= Math.floor( (colors[i1][i*3+j]-colors[i0][i*3+j])*time/last + colors[i0][i*3+j]);
-      if ( j<2 ) rgb+=',';
-    }
-    rgb+=')';
-    gradient.addColorStop( i/3, rgb );
-  }
-  
-  garden.ambient= (ambients[i1]-ambients[i0])*time/last + ambients[i0];
-}*/
-
-    
-// var lerpTime= 10000;    // time taken to fade sky colors
-// var nextLerpTime= 15000;  // after fading, how much time to wait to fade colors again.
-
-var interval= null;
-var canvas= null;
-var ctx= null;
-var garden= null;
-
-var gradient;
-var time;
-
-function init(images) {
-  
-    canvas= document.getElementById("s");
-    ctx = canvas.getContext('2d');
-    canvas.width= window.innerWidth;
-    canvas.height=window.innerHeight;
-
-    garden= new Garden();
-    //第三个参数是草的数量 300
-    garden.initialize(canvas.width, canvas.height, 300);
-    
-    // lerp(0,2000);
-    
-    time= new Date().getTime();
-    //每隔30s执行一次_doit函数
-    interval = setInterval(_doit, 30);
-}
-
-// sky colors
-colors= [ 
-          [ 0x00, 0x00, 0x3f, 
-            0x00, 0x3f, 0x7f,
-            0x1f, 0x5f, 0xc0,
-            0x3f, 0xa0, 0xff ],
-
-          [ 0x00, 0x3f, 0x7f, 
-            0xa0, 0x5f, 0x7f,
-            0xff, 0x90, 0xe0,
-            0xff, 0x90, 0x00 ],
-            
-          [ 0x00, 0x00, 0x00,
-            0x00, 0x2f, 0x7f,
-            0x00, 0x28, 0x50,
-            0x00, 0x1f, 0x3f ],
-            
-          [ 0x1f, 0x00, 0x5f,
-            0x3f, 0x2f, 0xa0,
-            0xa0, 0x1f, 0x1f,
-            0xff, 0x7f, 0x00 ] 
-        ];
-
-// ambient intensities for each sky color
-ambients= [ 1, 0.35, 0.05, 0.5 ];
-
-// start with this sky index.
-lerpindex= 0;
-
-//加载时候初始化
 window.addEventListener('load',init(null),false);
-

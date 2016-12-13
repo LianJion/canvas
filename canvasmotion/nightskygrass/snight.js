@@ -1,11 +1,14 @@
 //grass originally by Roman Taraban
 
-var canvas   = document.getElementById("canvas"),
+var canvas   = document.getElementById("test"),
     ctx      = canvas.getContext('2d'),
     stack    = [],
     pausedGrass = false,
     w        = window.innerWidth,
     h        = window.innerHeight;
+
+canvas.width = w;
+canvas.height = h;
 
 
 
@@ -14,6 +17,7 @@ var drawer = function(){
   //ctx.fillStyle="#222";
   if (pausedGrass) {
     ctx.clearRect(0,0,w,h);
+    //开始遍历stack里面的anim函数
     stack.forEach(function(el){
       el();  
     })
@@ -21,7 +25,10 @@ var drawer = function(){
  
   requestAnimationFrame(drawer);
 }
+
+
 var anim = function(){
+  //设置x,y的参数
   var x = 0, y = 0;
   //tallness of blades * variable + min 
   var maxTall = Math.random()*(h/8)+(h/8);
@@ -37,34 +44,38 @@ var anim = function(){
   var color = 'rgb('+c(125,50)+','+c(225,80)+','+c(80,50)+')';
   return function(){
     
-    //how fast + far the blades bend 
-    var deviation=Math.cos(x/50)*Math.min(x/4,50),
+    //how fast + far the blades bend  deviation背离
+    var deviation = Math.cos(x/50)*Math.min(x/4,50),
         tall = Math.min(x/2,maxTall),
         size = Math.min(x/50,maxSize);
+    //x值进行变化
     x+=speed;
     ctx.save();
     
-    ctx.strokeWidth=10;
-    ctx.translate(w/2+position, h)
-    ctx.fillStyle=color;
-    
-    ctx.beginPath();
-    ctx.lineTo(-size,0);
-    ctx.quadraticCurveTo(-size,-tall/2,deviation,-tall);
-    ctx.quadraticCurveTo(size,-tall/2,size,0);
-    //使用路径显示不了，要用fill()
-    ctx.fill();
+      ctx.strokeWidth=10;
+      ctx.translate(w/2+position, h)
+      ctx.fillStyle=color;
+      
+      ctx.beginPath();
+      ctx.lineTo(-size,0);
+      //一个控制点，一个描点
+      ctx.quadraticCurveTo(-size,-tall/2,deviation,-tall);
+      ctx.quadraticCurveTo(size,-tall/2,size,0);
+      //使用路径显示不了，要用fill()
+      ctx.fill();
     
     ctx.restore()
   }    
 };
-//number of blades it makes
-for(var x = 0; x<(w/7);x++){stack.push(anim());}
-canvas.width = w;
-canvas.height = h;
 
 
+//number of blades it makes，绘制多少草
+for(var x = 0; x<(w/7);x++) {
+  //把anim()都放到stack里了
+  stack.push(anim());
+}
 
+//控制草长停的按钮
 var animateGrassButton = document.getElementById('animateGrassButton');
 animateGrassButton.onclick = function (e) {
   pausedGrass = pausedGrass ? false : true;
@@ -79,7 +90,7 @@ animateGrassButton.onclick = function (e) {
 };
 
 
-
+// 粒子不用看
 /*
 Bouncing Balls orignally by Rob Glazebrook
 Added glow, changed size, color and speed

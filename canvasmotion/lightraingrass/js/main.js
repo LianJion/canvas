@@ -152,12 +152,12 @@ this.hitTest = function(x1, y1, w1, h1, x2, y2, w2, h2){return !(x1 + w1 < x2 ||
 /*=============================================================================*/ 
 /* Clear Canvas
 /*=============================================================================*/
-    this.clearCanvas = function(){
-      this.ctx.globalCompositeOperation = 'destination-out';
-      this.ctx.fillStyle = 'rgba(0,0,0,'+this.rand(1, 30)/100+')';
-      this.ctx.fillRect(0,0,this.cw,this.ch);
-      this.ctx.globalCompositeOperation = 'source-over';
-    };
+  this.clearCanvas = function(){
+    this.ctx.globalCompositeOperation = 'destination-out';
+    this.ctx.fillStyle = 'rgba(0,0,0,'+this.rand(1, 30)/100+')';
+    this.ctx.fillRect(0,0,this.cw,this.ch);
+    this.ctx.globalCompositeOperation = 'source-over';
+  };
   
 /*=============================================================================*/ 
 /* Resize on Canvas on Window Resize
@@ -171,19 +171,19 @@ $(window).on('resize', function(){
 /* Animation Loop
 /*=============================================================================*/
   this.loop = function(){
-      var loopIt = function(){
-        if (paused) {
-          requestAnimationFrame(loopIt, _this.c);
-          _this.clearCanvas();
-          _this.updateL();
-          _this.lightningTimer();
-          _this.renderL();  
-        } else {
-          console.log("a");
-        }
-       
-    };
-    loopIt();         
+    var loopIt = function(){
+      if (paused) {
+        requestAnimationFrame(loopIt, _this.c);
+        _this.clearCanvas();
+        _this.updateL();
+        _this.lightningTimer();
+        _this.renderL();  
+      } else {
+        console.log("a");
+      }
+     
+  };
+  loopIt();         
   };
   
 };
@@ -260,7 +260,7 @@ animateLightningButton.onclick = function (e) {
 var animateRainButton = document.getElementById('animateRainButton');
 animateRainButton.onclick = function (e) {
   pausedRain = pausedRain ? false : true;
-  requestNextAnimationFrame(draw);
+
   if (pausedRain) {
     animateRainButton.value = '雨来';
   }
@@ -300,18 +300,23 @@ for(var b = 0; b < maxParts; b++) {
   particles[b] = init[b];
 }
 
+function rand(rMi, rMa) {
+  {return ~~((Math.random()*(rMa-rMi+1))+rMi);};
+}
+
+function clearScreen() {
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.fillStyle = 'rgba(0,0,0,'+rand(1, 30)/100+')';
+  ctx.fillRect(0,0,w,h);
+  ctx.globalCompositeOperation = 'source-over';
+}
 
 function draw() {
   if(pausedRain) {
     console.log(pausedRain);
 
     ctx.clearRect(0, 0, w, h);
-    //生长动画写到下雨里面，这样清屏一起清，但是顺序有点问题
-    if (pausedGrass) {
-      stack.forEach(function(el){
-        el();  
-      })
-    }
+    // clearScreen;
 
     for(var a = 0; a < particles.length; a++) {
       var p = particles[a];
@@ -322,6 +327,16 @@ function draw() {
       ctx.stroke();
     }
     move();
+    //生长动画写到下雨里面，这样清屏一起清，但是顺序有点问题
+    if (pausedGrass) {
+      stack.forEach(function(el){
+        el();  
+      })
+    }
+
+    // drawer();
+
+    
   } else {
     ctx.clearRect(0, 0, w, h);
   }
@@ -405,7 +420,9 @@ canvas.height = h;
 var animateGrassButton = document.getElementById('animateGrassButton');
 animateGrassButton.onclick = function (e) {
   pausedGrass = pausedGrass ? false : true;
-  drawer();
+  
+  // drawer();
+
   if (pausedGrass) {
     animateGrassButton.value = '长';
   }
@@ -416,6 +433,6 @@ animateGrassButton.onclick = function (e) {
 
 
 
-
+  requestNextAnimationFrame(draw);
 
 
