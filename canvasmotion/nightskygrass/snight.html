@@ -46,7 +46,25 @@
       z-index: 5;
       position: absolute;
       top: 20px;
+      width: 80px;
+      height: 30px;
     }
+
+    #poem {
+      z-index: 5;
+      position: absolute;
+      top: 50px;
+      left: 200px;
+      /*background-color: red;*/
+      color: white;
+      font-family:"KaiTi" ,"Times New Roman";
+      font-size: 40px;
+      /*使得文本竖着*/
+      writing-mode: tb-rl; 
+      -webkit-writing-mode: vertical-rl;      
+      writing-mode: vertical-rl;
+    }
+
     #test{
       position: relative;
       display: block;
@@ -58,12 +76,36 @@
 <body>
   <!-- 绘制夜空中的粒子 -->
   <!-- <script src='https://rawgithub.com/soulwire/sketch.js/master/js/sketch.min.js'></script> -->
+  <div id="poem"></div>
+  <script src="requestNextAnimationFrame.js" type="text/javascript"></script>
+  <script src="jquery.min.js" type="text/javascript"></script>
+  <script src="jquery.velocity.min.js" type="text/javascript"></script>
+  <script src="velocity.js"></script>
+  <script src= "velocity.ui.js"></script>
+  <script src="jquery.blast.js"></script>
   <script src="sketch.min.js" type="text/javascript"></script>
-  <input id='animateGrassButton' type='button' value='庄稼'/>
+  <input id='animateGrassButton' type='button' value='草长莺飞'/>
   <div id="behind">
     <canvas id="test"></canvas>
   </div>
   <div id="dusk"></div>
   <script src="snight.js" type="text/javascript"></script>
+  <script type="text/javascript">
+
+
+  var message = "夜风拂幽草 流萤缀其间";
+  $("#poem").html(message).blast({ delimiter: "letter"}).css({opacity: 0, display: "inline-block"})
+  .velocity("transition.perspectiveDownIn",{ stagger:1500, duration:3000, delay:2000 });
+
+//   $("#poem .blast").velocity( "transition.perspectiveDownOut", {
+//     stagger: 500,
+//     backwards: true,
+//     complete: function(){
+//       $("#poem").html(message)
+//       .blast({ delimiter: "letter"}).css({opacity: 0, display: "inline-block"}).velocity("transition.perspectiveDownIn", { stagger: 500});
+//     }
+// })
+
+  </script>
 </body>
 </html>

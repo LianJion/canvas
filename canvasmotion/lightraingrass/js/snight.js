@@ -52,6 +52,8 @@ var anim = function(){
     ctx.lineTo(-size,0);
     ctx.quadraticCurveTo(-size,-tall/2,deviation,-tall);
     ctx.quadraticCurveTo(size,-tall/2,size,0);
+
+    
     //使用路径显示不了，要用fill()
     ctx.fill();
     

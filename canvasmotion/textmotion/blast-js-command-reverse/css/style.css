@@ -1,0 +1,50 @@
+body {
+  font-family: "Helvetica Neue", Helvetica;
+  width: 90%;
+  font-weight: 200;
+  letter-spacing: 1px;
+  margin: 25px auto 0 auto;
+  background: rgb(234, 235, 235);
+  color: rgb(25, 25, 25);
+}
+
+div, p {
+  margin: 0 auto;
+}
+
+p {
+  color: rgb(125, 125, 125);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: 17px;
+}
+
+div {
+  width: 50%;
+}
+
+.blast {
+  display: inline-block;
+  color: red;
+  /*opacity: 0;*/
+}
+
+.blast:nth-child(odd) {
+  color: blue;
+}
+
+.myclass {
+  color: red;
+  background-color: blue;
+  opacity: 1;
+}
+
+.blast-word-refresh {
+  color: yellow;
+}
+
+#test{
+  /*font-family: "Microsoft YaHei";*/
+  font-family:"KaiTi" ,"Times New Roman";
+  font-size: 40px;
+}

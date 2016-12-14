@@ -104,16 +104,23 @@ var canvas= document.getElementById("s");
           // rotate the point, so grass curves are modified accordingly. If just moved horizontally, the curbe would
           // end by being unstable with undesired visuals. 
           var ang= this.angle + Math.PI/2 + inc_punta_hierba * Math.PI/180*(this.maxAngle*Math.cos(time*0.0002));
-          var px= this.coords[0]+ this.offset_control_point + this.alto_hierba*Math.cos(ang);
-          var py= this.coords[1]                  - this.alto_hierba*Math.sin(ang);
+
+
+          var px= this.coords[0] + this.offset_control_point + this.alto_hierba*Math.cos(ang);
+          var py= this.coords[1] - this.alto_hierba*Math.sin(ang);
     
           var c= this.coords;
       
           ctx.beginPath();
           ctx.moveTo( c[0], c[1] );
           //这不对吧？怎么是立方贝塞尔了？怪不得是三维效果，4个坐标，尼玛，（x,y,z,w）
-          ctx.bezierCurveTo(c[0], c[1], c[2], c[3], px, py);
+          // ctx.bezierCurveTo(c[0], c[1], c[2], c[3], px, py);
+       
+          ctx.quadraticCurveTo(c[2], c[3], px, py);
           ctx.bezierCurveTo(px, py, c[4], c[5], c[6], c[7]);
+          //以(px, py)为起点，绘制二维贝塞尔曲线
+          // ctx.quadraticCurveTo(c[4], c[5], c[6], c[7]);
+
           ctx.closePath();
           ctx.fillStyle='rgb('+
               Math.floor(this.color[0]*ambient)+','+
