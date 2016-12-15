@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>bird</title>
+    <style type="text/css">
+      @import "compass/css3";
+
+body {
+  background: #efede6;
+  padding: 10em;
+}
+
+.wrapper {
+    background-color:#b1afa6;
+    display: block;
+    height: 24px;
+    width: 24px;
+}
+
+.twitter-bird {
+    display: block;
+    height: 24px;
+    width: 24px;
+   background-image: url(http://www.chelseatextiles.com/uk/skin/frontend/default/chelseatextiles/images/twitter-bird-sprite.png);
+  transform-origin:50% -60px;
+  background-position: 0px 0;
+}
+
+.wrapper:hover .twitter-bird{
+    animation: 
+      fly 0.2s steps(3) 0 infinite, 
+      circle 2s ease-out 0.5s 1;
+}
+
+@keyframes fly {
+    from { background-position: 0px 0; }
+    to { background-position: -72px 0; }
+}
+
+@keyframes circle {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(-360deg); }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="wrapper"><div class="twitter-bird" id="target"></div></div>
+</body>
+</html>

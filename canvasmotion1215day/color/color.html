@@ -1,0 +1,76 @@
+<!DOCTYPE html>  
+<html>  
+<head>  
+    <title>Color Transform</title>  
+    <script type="text/javascript" src="./lufylegend-1.9.7.min.js"></script>  
+    <script type="text/javascript">  
+        LInit(50, "mylegend", 600, 400, main);  
+  
+        function main () {  
+            var loader = new LLoader();  
+            loader.addEventListener(LEvent.COMPLETE, function (e) {  
+                rectColorTransform();  
+                imageColorTransform(e.target);  
+            });  
+            loader.load("./yorhomwang.png")  
+        }  
+  
+        function rectColorTransform () {  
+            var w = 200, h = 240;  
+  
+            var rectLayer = new LShape();  
+            rectLayer.graphics.drawRoundRect(0, "", [0, 0, w, h, 5], true, "#000000");  
+  
+            var bmpd = new LBitmapData(null, 0, 0, w, h);  
+            var bmp = new LBitmap(bmpd);  
+            bmp.x = bmp.y = 20;  
+            addChild(bmp);  
+  
+            var rect = new LRectangle(0, 0, w, h);  
+            var ct = new LColorTransform(1, 1, 1, 1, 255, 0, 0, 0);  
+  
+            startTween(bmpd, rectLayer, ct, rect);  
+        }  
+  
+        function imageColorTransform(content) {  
+            var bmpd = new LBitmapData(null, 0, 0, content.width, content.height);  
+            var bmp = new LBitmap(bmpd);  
+            bmp.x = 250;  
+            bmp.y = 20;  
+            addChild(bmp);  
+  
+            var rect = new LRectangle(0, 0, bmpd.width, bmpd.height);  
+            var ct = new LColorTransform(1, 1, 1, 1, 0, 0, 0, 0);  
+  
+            startTween(bmpd, new LBitmap(new LBitmapData(content, 0, 0, rect.width, rect.height)), ct, rect);  
+        }  
+  
+        function startTween (bmpd, layer, ct, rect) {  
+            var update = function (o) {  
+                bmpd.draw(layer, null, o, null, rect);    
+            };  
+  
+            update(ct);  
+  
+            LTweenLite.to(ct, 3, {  
+                blueOffset : 255,  
+                loop : true,  
+                onUpdate : update  
+            }).to(ct, 3, {  
+                redOffset : -255,  
+            }).to(ct, 3, {  
+                greenOffset : 255,  
+            }).to(ct, 3, {  
+                blueOffset : -255,  
+            }).to(ct, 3, {  
+                redOffset : 255,  
+            }).to(ct, 3, {  
+                greenOffset : -255,  
+            });  
+        }  
+    </script>  
+</head>  
+<body>  
+    <div id="mylegend"></div>  
+</body>  
+</html> 

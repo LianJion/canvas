@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="gbk">
+  <title>Waves with the drawing API</title>
+ </head>
+<body>
+ <canvas id="canvas" width="400" height="400"></canvas>
+ <script src="Ball.js"></script>
+ <script>
+window.requestAnimFrame = (function(callback) {  
+    return window.requestAnimationFrame ||   
+     window.webkitRequestAnimationFrame ||   
+        window.mozRequestAnimationFrame ||   
+          window.oRequestAnimationFrame ||   
+         window.msRequestAnimationFrame ||  
+           function(callback) {  
+             window.setTimeout(callback, 1000 / 60);  
+           };  
+      })();  
+
+
+      window.onload = function () {
+       var canvas = document.getElementById('canvas'),
+           context = canvas.getContext('2d'),
+           scratch = document.createElement('canvas'),
+           scratchContext = scratch.getContext('2d'),
+           ball = new Ball(10),
+           sun = new Image(),
+
+           angle = 0,
+           angle2 = 0,
+           range = 50,
+           centerY = canvas.height / 2,
+           xspeed = 1,
+           yspeed = 0.05,
+           xpos = 0,
+           ypos = centerY;
+           sun.src = sun.png;
+         
+
+      function drawWave(ctx) {
+         ctx.beginPath();
+         ctx.lineWidth = 5;
+         for (x = 0; x < canvas.width; x++) {                 
+            xpos += Math.abs(xspeed);
+            angle += Math.abs(yspeed);
+            ypos = centerY / 2 + Math.sin(angle) * range;
+            ctx.lineTo(xpos, ypos);
+         }
+        ctx.stroke();
+        xpos = 0;
+        angle = 0;
+     }
+            
+     scratch.height = canvas.height;
+     scratch.width = canvas.width;
+            
+     drawWave(scratchContext); 
+     context.drawImage(scratch, 0, 0);
+     // ball.x = 0;
+     sun.x = 0;
+            
+     (function drawFrame() {
+       requestAnimationFrame(drawFrame, canvas);
+       context.clearRect(0, 0, canvas.width, canvas.height);
+                
+       // Place pre-rendered canvas in our canvas
+       context.drawImage(scratch, 0, 0);
+       // if (ball.x > canvas.width) {
+       if (sun.x > canvas.width) {
+          xspeed = -Math.abs(xspeed);
+          yspeed = -Math.abs(yspeed);
+       } else if (ball.x < 0) {
+          xspeed = Math.abs(xspeed);
+          yspeed = Math.abs(yspeed);
+       } 
+                
+        // ball.x += xspeed;
+        sun.x += xspeed;
+        angle2 += yspeed;
+        // ball.y = centerY / 2 + Math.sin(angle2) * range;
+        sun.y = centerY / 2 + Math.sin(angle2) * range;
+        // ball.draw(context);
+        context.drawImage(sun, sun.x, sun.y, sun.width, sun.height);
+     })();
+   };
+</script>
+
+</body>
+</html>
